@@ -22,15 +22,15 @@
 #include <fstream>
 #include "THStack.h"
 #include "TSpectrum.h"
-void background()
+
+void background(Double_t life1, Double_t life2)
 {
+gROOT->SetBatch(kTRUE);
 
      fstream file;
 
      file.open("output_file.csv", std::ios_base::app | std::ios_base::in);
 
-
-  Double_t life1 = 1e-11, life2 = 0;
 /*
   THStack *hs = new THStack("hs","histo");
   gStyle->SetPalette(1);
@@ -140,7 +140,6 @@ void background()
  Double_t abs_redu_chi = match2->GetChisquare()/match2->GetNDF()+match1->GetChisquare()/match1->GetNDF();
 
  if (file.is_open())
-     file <<life1<<" "<<life2<<" "<<abs_redu_chi<<endl;
-
+     file <<life1<<" "<<life2<<" "<<match1->GetChisquare()/match1->GetNDF()<<" "<<match2->GetChisquare()/match2->GetNDF()<<" "<<abs_redu_chi<<endl;
 
   }
