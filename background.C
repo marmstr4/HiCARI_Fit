@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include "THStack.h"
+#include "TSpectrum.h"
 void background()
 {
 
@@ -44,6 +45,7 @@ void background()
 
   //h_E_In132Sn_131In_flash_trig_plas_music->Rebin(2);
 
+  /*
   THStack *hs = new THStack("hs","histo");
   gStyle->SetPalette(1);
 
@@ -60,5 +62,31 @@ void background()
   hs->Draw("pfc nostack");
 
   MBegamdc->Draw("same");
+  */
+   gROOT->SetBatch(kTRUE);
+
+   int npeaks = 2;
+   MBegamdc->GetXaxis()->SetRangeUser(500,1100);
+   // Use TSpectrum to find the peak candidates
+   TSpectrum *s = new TSpectrum(npeaks);
+   Int_t nfound = s->Search(MBegamdc,25,"",0.50);
+
+   TF1  *fitting1 = new TF1("fitting1","gaus",0,2000);
+   TF1  *fitting2 = new TF1("fitting2","gaus",0,2000);
+   Double_t *mean;
+
+   for (int i = 0; i < npeaks; i++) {
+     mean = s->GetPositionX();
+
+
+     cout<<i<<" "<<mean[i]<<endl;
+   }
+
+   MBegamdc->Fit("fitting1","","",mean[0]-25,mean[0]+25);
+   MBegamdc->Fit("fitting2","","",mean[1]-25,mean[1]+25);
+
+     cout<<1<<" "<<fitting1->GetParameter(0)<<" "<<fitting1->GetParameter(1)<<" "<<fitting1->GetParameter(2)<<endl;
+     cout<<2<<" "<<fitting2->GetParameter(0)<<" "<<fitting2->GetParameter(1)<<" "<<fitting2->GetParameter(2)<<endl;
+
 
   }
